@@ -1,63 +1,63 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
-  // criar array de tarefas vazia.
-  tasks: Task[] = [];
+  // injetar uma instância do repositório de tarefas.
+  constructor(
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
+  ) {}
 
-  create(createTaskDto: CreateTaskDto) {
-    // criar nova tarefa, atribuindo a ela um id único e adicionando-a à array de tarefas.
-    let lastId = 0;
-    if (this.tasks.length > 0) {
-      lastId = this.tasks[this.tasks.length - 1].id;
+  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+    // criar uma tarefa nova e salvá-la no bando de dados.
+    const task = new Task();
+    task.description = createTaskDto.description;
+    task.completed = createTaskDto.completed;
+    return await this.taskRepository.save(task);
+  }
+
+  async findAll(): Promise<Task[]> {
+    // mostrar todas as tarefas do banco de dados.
+    return await this.taskRepository.find();
+  }
+
+  async findOne(id: number): Promise<Task | undefined> {
+    // achar uma tarefa específica.
+    return await this.taskRepository.findOne({ where: { id } });
+  }
+
+  async findCompleted(): Promise<Task[]> {
+    // mostrar apenas as tarefas completas.
+    return await this.taskRepository.find({ where: { completed: true } });
+  }
+
+  async findIncompleted(): Promise<Task[]> {
+    // mostrar apenas as tarefas incompletas.
+    return await this.taskRepository.find({ where: { completed: false } });
+  }
+
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    // achar uma tarefa específica e atualizá-la.
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new Error('Tarefa não encontrada');
     }
-
-    createTaskDto.id = lastId + 1;
-    this.tasks.push(createTaskDto);
-
-    return createTaskDto;
+    task.description = updateTaskDto.description;
+    task.completed = updateTaskDto.completed;
+    return await this.taskRepository.save(task);
   }
 
-  findAll() {
-    // mostrar todas as tarefas.
-    return this.tasks;
-  }
-
-  findOne(id: number) {
-    // encontrar tarefa específica.
-    const task = this.tasks.find((value) => value.id == id);
-    return task;
-  }
-
-  findCompleted() {
-    // mostrar tarefas realizadas.
-    const completedTasks = this.tasks.filter((task) => task.completed);
-    return completedTasks;
-  }
-
-  findIncompleted() {
-    // mostrar tarefas não realizadas.
-    const incompleted = this.tasks.filter((task) => !task.completed);
-    return incompleted;
-  }
-
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    // achar uma tarefa específica, verificar se ela já existe na array de tarefas. Se sim, atualizá-la e retorná-la atualizada.
-    const taskArray = this.findOne(updateTaskDto.id);
-    if (taskArray) {
-      taskArray.description = updateTaskDto.description;
-      taskArray.completed = updateTaskDto.completed;
+  async remove(id: number): Promise<void> {
+    // deletar uma tarefa específica.
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new Error('Tarefa não encontrada');
     }
-
-    return taskArray;
-  }
-
-  remove(id: number) {
-    // deletar tarefa específica.
-    const index = this.tasks.findIndex((value) => value.id == id);
-    this.tasks.splice(index, 1);
+    await this.taskRepository.remove(task);
   }
 }

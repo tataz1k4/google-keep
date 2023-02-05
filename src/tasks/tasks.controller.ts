@@ -8,6 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
+import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
@@ -15,38 +16,31 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
-  }
-
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  async findAll(): Promise<Task[]> {
+    return await this.tasksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<Task> {
+    return await this.tasksService.findOne(id);
   }
 
-  @Get('/completed')
-  findCompleted() {
-    return this.tasksService.findCompleted();
-  }
-
-  @Get('/incompleted')
-  findIncompleted() {
-    return this.tasksService.findIncompleted();
+  @Post()
+  async create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    return await this.tasksService.create(createTaskDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+  async update(
+    @Param('id') id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
+    return await this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  async remove(@Param('id') id: number): Promise<void> {
+    return await this.tasksService.remove(id);
   }
 }
