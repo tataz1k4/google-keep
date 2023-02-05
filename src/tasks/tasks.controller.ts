@@ -21,6 +21,16 @@ export class TasksController {
     return await this.tasksService.findAll();
   }
 
+  @Get('completed')
+  async findCompleted() {
+    return await this.tasksService.findCompleted();
+  }
+
+  @Get('incompleted')
+  async findIncompleted() {
+    return await this.tasksService.findIncompleted();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Task> {
     return await this.tasksService.findOne(id);
