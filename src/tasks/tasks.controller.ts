@@ -26,9 +26,9 @@ export class TasksController {
     return await this.tasksService.findCompleted();
   }
 
-  @Get('incompleted')
-  async findIncompleted() {
-    return await this.tasksService.findIncompleted();
+  @Get('incomplete')
+  async findIncomplete() {
+    return await this.tasksService.findIncomplete();
   }
 
   @Get(':id')

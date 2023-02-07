@@ -36,7 +36,7 @@ export class TasksService {
     return await this.taskRepository.find({ where: { completed: true } });
   }
 
-  async findIncompleted(): Promise<Task[]> {
+  async findIncomplete(): Promise<Task[]> {
     // mostrar apenas as tarefas incompletas.
     return await this.taskRepository.find({ where: { completed: false } });
   }
