@@ -24,8 +24,12 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+<p>
+  A To-Do List application inspired on Google Keep created for a hiring process.<br>
+This project was made using NestJS in the back-end and Svelte on the front-end.<br>
+The code was written in TypeScript and the application is connected to PostgreSQL.
+</p>
+  
 ## Installation
 
 ```bash
