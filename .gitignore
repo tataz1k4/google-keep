@@ -35,4 +35,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # PG ADMIN
-orm.config.ts
+# orm.config.ts
